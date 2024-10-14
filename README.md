@@ -1,5 +1,26 @@
 # spotlight.nvim
 
+## Setup
+
+### [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+spotlight.nvim has a default plugin spec—see [`lazy.lua`](./lazy.lua). This spec has a set default mappings and lazy loading enabled!
+
+```lua
+---@module "lazy"
+---@type LazySpec
+{
+  "TymekDev/shiki.nvim"
+}
+```
+
+> [!TIP]
+> Annotations above are optional. Use [lazydev.nvim](https://github.com/folke/lazydev.nvim) to get completions based on them.
+
+## Configuration
+
+_Currently, there is nothing to configure._
+
 ## Inspiration
 
 I got [Highlight specific lines][] linked by [Damian][]. Then I [nerd sniped][]
