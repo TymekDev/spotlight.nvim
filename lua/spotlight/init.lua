@@ -16,7 +16,8 @@ M.clear = function(line_start, line_end)
   vim.api.nvim_buf_clear_namespace(0, ns, line_start - 1, line_end)
 end
 
-M.setup = function()
+---@param cfg? spotlight.Config Currently unused
+M.setup = function(cfg)
   vim.api.nvim_create_user_command(
     "Spotlight",
     ---@param tbl { line1: number, line2: number }

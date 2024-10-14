@@ -1,0 +1,1 @@
+---@class (exact) spotlight.Config
