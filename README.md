@@ -21,6 +21,12 @@ spotlight.nvim has a default plugin spec—see [`lazy.lua`](./lazy.lua). This sp
 
 _Currently, there is nothing to configure._
 
+## Known Issues
+
+1. If you create a multi-line spotlight by providing a range to `Spotlight`, then
+   running `SpotlightClear` on a different line than the first line of the range
+   will remove the spotlight; however Neovim won't immediately update visually.
+
 ## Inspiration
 
 I got [Highlight specific lines][] linked by [Damian][]. Then I [nerd sniped][]
