@@ -9,6 +9,6 @@ return {
     { mode = { "n", "v" }, "<Leader>sC", "<Cmd>%SpotlightClear<CR>" },
   },
   ---@module "spotlight"
-  ---@type spotlight.Config
+  ---@type spotlight.ConfigPartial
   opts = {},
 }

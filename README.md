@@ -19,7 +19,14 @@ spotlight.nvim has a default plugin spec—see [`lazy.lua`](./lazy.lua). This sp
 
 ## Configuration
 
-_Currently, there is nothing to configure._
+All configurable settings with their defaults:
+
+```lua
+require("spotlight").setup({
+  -- The highlight group applied to the spotlighted lines
+  hl_group = "Visual",
+})
+```
 
 ## Known Issues
 

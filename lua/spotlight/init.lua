@@ -1,12 +1,19 @@
 local M = {}
 local ns = vim.api.nvim_create_namespace("spotlight.nvim")
 
+---@type spotlight.Config
+local config_default = {
+  -- The highlight group applied to the spotlighted lines
+  hl_group = "Visual",
+}
+
 ---@param line_start integer 1-indexed
 ---@param line_end integer 1-indexed
-local spotlight_lines = function(line_start, line_end)
+---@param config spotlight.Config
+local spotlight_lines = function(line_start, line_end, config)
   vim.api.nvim_buf_set_extmark(0, ns, line_start - 1, 0, {
     end_row = line_end - 1,
-    line_hl_group = "Visual",
+    line_hl_group = config.hl_group,
   })
 end
 
@@ -16,13 +23,15 @@ local spotlight_clear = function(line_start, line_end)
   vim.api.nvim_buf_clear_namespace(0, ns, line_start - 1, line_end)
 end
 
----@param cfg? spotlight.Config Currently unused
-M.setup = function(cfg)
+---@param config_partial? spotlight.ConfigPartial
+M.setup = function(config_partial)
+  local config = vim.tbl_deep_extend("force", config_default, config_partial or {})
+
   vim.api.nvim_create_user_command(
     "Spotlight",
     ---@param tbl { line1: number, line2: number }
     function(tbl)
-      spotlight_lines(tbl.line1, tbl.line2)
+      spotlight_lines(tbl.line1, tbl.line2, config)
     end,
     {
       desc = "Spotlight a range of lines (via spotlight.nvim)",
