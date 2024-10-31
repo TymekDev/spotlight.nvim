@@ -10,6 +10,7 @@ local spotlight_lines = function(line_start, line_end, cfg)
   vim.api.nvim_buf_set_extmark(0, ns, line_start - 1, 0, {
     end_row = line_end - 1,
     line_hl_group = cfg.hl_group,
+    invalidate = true,
   })
 end
 
