@@ -34,7 +34,11 @@ M.setup = function(cfg)
       desc = "Spotlight a range of lines (via spotlight.nvim)",
       range = true,
       nargs = "*",
-      complete = function()
+      ---@param word string "the leading portion of the argument currently being completed on"
+      complete = function(word)
+        if word == "hl_group=" then
+          return vim.tbl_keys(vim.api.nvim_get_hl(0, {}))
+        end
         return vim.tbl_keys(config.default())
       end,
     }
