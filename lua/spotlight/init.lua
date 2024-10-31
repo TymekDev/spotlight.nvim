@@ -1,3 +1,4 @@
+local command = require("spotlight.command")
 local config = require("spotlight.config")
 local M = {}
 local ns = vim.api.nvim_create_namespace("spotlight.nvim")
@@ -24,13 +25,18 @@ M.setup = function(cfg)
 
   vim.api.nvim_create_user_command(
     "Spotlight",
-    ---@param tbl { line1: number, line2: number }
+    ---@param tbl { line1: number, line2: number, fargs: string[] }
     function(tbl)
-      spotlight_lines(tbl.line1, tbl.line2, config.current())
+      local cfg = command.fargs_to_config(tbl.fargs) ---@diagnostic disable-line: redefined-local
+      spotlight_lines(tbl.line1, tbl.line2, cfg)
     end,
     {
       desc = "Spotlight a range of lines (via spotlight.nvim)",
       range = true,
+      nargs = "*",
+      complete = function()
+        return vim.tbl_keys(config.default())
+      end,
     }
   )
 
