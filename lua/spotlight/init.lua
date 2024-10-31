@@ -22,7 +22,24 @@ end
 ---@param line_start integer 1-indexed
 ---@param line_end integer 1-indexed
 local spotlight_clear = function(bufnr, line_start, line_end)
-  vim.api.nvim_buf_clear_namespace(bufnr, ns, line_start - 1, line_end)
+  local extmarks = vim.api.nvim_buf_get_extmarks(
+    bufnr,
+    ns,
+    { line_start - 1, 0 },
+    { line_end - 1, 0 },
+    { overlap = true }
+  )
+  for extmark in vim.iter(extmarks) do
+    vim.api.nvim_buf_del_extmark(bufnr, ns, extmark[1])
+  end
+  if #vim.api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, { limit = 1 }) == 0 then
+    buffers[bufnr] = nil
+  end
+end
+
+---@param bufnr integer
+local spotlight_clear_buffer = function(bufnr)
+  spotlight_clear(bufnr, 1, vim.api.nvim_buf_line_count(bufnr))
 end
 
 ---@param cfg? spotlight.ConfigPartial
@@ -56,15 +73,16 @@ M.setup = function(cfg)
     ---@param tbl { line1: number, line2: number, args: string }
     function(tbl)
       if tbl.args == "global" then
-        for bufnr in vim.iter(buffers) do
-          spotlight_clear(bufnr, 1, vim.api.nvim_buf_line_count(bufnr))
-          buffers[bufnr] = nil
-        end
+        vim.iter(buffers):each(spotlight_clear_buffer)
         return
       end
 
-      local bufnr = vim.api.nvim_get_current_buf()
-      spotlight_clear(bufnr, tbl.line1, tbl.line2)
+      if tbl.args == "buffer" then
+        spotlight_clear_buffer(vim.api.nvim_get_current_buf())
+        return
+      end
+
+      spotlight_clear(vim.api.nvim_get_current_buf(), tbl.line1, tbl.line2)
     end,
     {
       desc = "Remove a range of lines from the spotlight (via spotlight.nvim)",
