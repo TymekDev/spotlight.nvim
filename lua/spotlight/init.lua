@@ -3,21 +3,23 @@ local config = require("spotlight.config")
 local M = {}
 local ns = vim.api.nvim_create_namespace("spotlight.nvim")
 
+---@param bufnr integer
 ---@param line_start integer 1-indexed
 ---@param line_end integer 1-indexed
 ---@param cfg spotlight.Config
-local spotlight_lines = function(line_start, line_end, cfg)
-  vim.api.nvim_buf_set_extmark(0, ns, line_start - 1, 0, {
+local spotlight_lines = function(bufnr, line_start, line_end, cfg)
+  vim.api.nvim_buf_set_extmark(bufnr, ns, line_start - 1, 0, {
     end_row = line_end - 1,
     line_hl_group = cfg.hl_group,
     invalidate = true,
   })
 end
 
+---@param bufnr integer
 ---@param line_start integer 1-indexed
 ---@param line_end integer 1-indexed
-local spotlight_clear = function(line_start, line_end)
-  vim.api.nvim_buf_clear_namespace(0, ns, line_start - 1, line_end)
+local spotlight_clear = function(bufnr, line_start, line_end)
+  vim.api.nvim_buf_clear_namespace(bufnr, ns, line_start - 1, line_end)
 end
 
 ---@param cfg? spotlight.ConfigPartial
@@ -28,8 +30,9 @@ M.setup = function(cfg)
     "Spotlight",
     ---@param tbl { line1: number, line2: number, fargs: string[] }
     function(tbl)
+      local bufnr = vim.api.nvim_get_current_buf()
       local cfg = command.fargs_to_config(tbl.fargs) ---@diagnostic disable-line: redefined-local
-      spotlight_lines(tbl.line1, tbl.line2, cfg)
+      spotlight_lines(bufnr, tbl.line1, tbl.line2, cfg)
     end,
     {
       desc = "Spotlight a range of lines (via spotlight.nvim)",
@@ -49,7 +52,8 @@ M.setup = function(cfg)
     "SpotlightClear",
     ---@param tbl { line1: number, line2: number }
     function(tbl)
-      spotlight_clear(tbl.line1, tbl.line2)
+      local bufnr = vim.api.nvim_get_current_buf()
+      spotlight_clear(bufnr, tbl.line1, tbl.line2)
     end,
     {
       desc = "Remove a range of lines from the spotlight (via spotlight.nvim)",
