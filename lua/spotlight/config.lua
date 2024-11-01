@@ -7,16 +7,16 @@ local default = {
 }
 
 ---@type spotlight.Config
-local current = default
+local current = vim.deepcopy(default)
 
 ---@return spotlight.Config
 M.current = function()
-  return current
+  return vim.deepcopy(current)
 end
 
 ---@return spotlight.Config
 M.default = function()
-  return default
+  return vim.deepcopy(default)
 end
 
 ---Update the spotlight.nvim's config. Fills missing fields with defaults.
@@ -24,7 +24,7 @@ end
 ---Use without the argument (`set()`) to reset the config to defaults.
 ---@param cfg? spotlight.ConfigPartial
 M.set = function(cfg)
-  current = vim.tbl_deep_extend("force", default, cfg or {})
+  current = vim.tbl_deep_extend("force", M.default(), cfg or {})
   return M.current()
 end
 
