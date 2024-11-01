@@ -2,6 +2,10 @@ local M = {}
 
 ---@type spotlight.Config
 local default = {
+  -- Should the spotlights have their ordinal number displayed in the sign column?
+  -- Every buffer has its own counter.
+  count = true,
+
   -- The highlight group applied to the spotlighted lines
   hl_group = "Visual",
 }

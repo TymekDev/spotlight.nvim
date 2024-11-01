@@ -2,20 +2,31 @@ local command = require("spotlight.command")
 local config = require("spotlight.config")
 local M = {}
 local ns = vim.api.nvim_create_namespace("spotlight.nvim")
----@type table<integer, any>
-local buffers = {}
+---@type table<integer, integer> Maps a bufnr to its counter.
+local buffers_counts = vim.defaulttable(function()
+  return 0
+end)
 
 ---@param bufnr integer
 ---@param line_start integer 1-indexed
 ---@param line_end integer 1-indexed
 ---@param cfg spotlight.Config
 local spotlight_lines = function(bufnr, line_start, line_end, cfg)
+  ---@type string?
+  local sign_text
+  local count = buffers_counts[bufnr]
+  if cfg.count then
+    count = count + 1
+    sign_text = string.format(math.min(count, 99)) -- only 2 characters allowed
+  end
+  buffers_counts[bufnr] = count -- even with the count disabled we need an entry in buffers_counts
+
   vim.api.nvim_buf_set_extmark(bufnr, ns, line_start - 1, 0, {
     end_row = line_end - 1,
     line_hl_group = cfg.hl_group,
+    sign_text = sign_text,
     invalidate = true,
   })
-  buffers[bufnr] = true
 end
 
 ---@param bufnr integer
@@ -33,7 +44,7 @@ local spotlight_clear = function(bufnr, line_start, line_end)
     vim.api.nvim_buf_del_extmark(bufnr, ns, extmark[1])
   end
   if #vim.api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, { limit = 1 }) == 0 then
-    buffers[bufnr] = nil
+    buffers_counts[bufnr] = nil
   end
 end
 
@@ -60,6 +71,9 @@ M.setup = function(cfg)
       nargs = "*",
       ---@param word string "the leading portion of the argument currently being completed on"
       complete = function(word)
+        if word == "count=" then
+          return { "false", "true" }
+        end
         if word == "hl_group=" then
           return vim.tbl_keys(vim.api.nvim_get_hl(0, {}))
         end
@@ -73,7 +87,9 @@ M.setup = function(cfg)
     ---@param tbl { line1: number, line2: number, args: string }
     function(tbl)
       if tbl.args == "global" then
-        vim.iter(buffers):each(spotlight_clear_buffer)
+        for bufnr, _ in pairs(buffers_counts) do
+          spotlight_clear_buffer(bufnr)
+        end
         return
       end
 
