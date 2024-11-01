@@ -40,9 +40,11 @@ local spotlight_clear = function(bufnr, line_start, line_end)
     { line_end - 1, 0 },
     { overlap = true }
   )
+
   for extmark in vim.iter(extmarks) do
     vim.api.nvim_buf_del_extmark(bufnr, ns, extmark[1])
   end
+
   if #vim.api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, { limit = 1 }) == 0 then
     buffers_counts[bufnr] = nil
   end
@@ -74,9 +76,11 @@ M.setup = function(cfg)
         if word == "count=" then
           return { "false", "true" }
         end
+
         if word == "hl_group=" then
           return vim.tbl_keys(vim.api.nvim_get_hl(0, {}))
         end
+
         return vim.tbl_keys(config.default())
       end,
     }
