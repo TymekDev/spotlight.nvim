@@ -101,7 +101,7 @@ M.setup = function(cfg)
       spotlight_clear(vim.api.nvim_get_current_buf(), tbl.line1, tbl.line2)
     end,
     {
-      desc = "Remove a range of lines from the spotlight (via spotlight.nvim)",
+      desc = "Remove a range of lines, a buffer, or everything from the spotlight (via spotlight.nvim)",
       range = true,
       nargs = "?",
       complete = function()
