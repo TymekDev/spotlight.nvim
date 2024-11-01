@@ -2,6 +2,10 @@
 
 Don't lose the audience when screen sharing—make things stand out by putting them in _the spotlight_.
 
+## ✨ Demo
+
+https://github.com/user-attachments/assets/cadc20d1-17fd-4a4b-b6b3-a5e0edb5dd52
+
 ## 🛠️ Installation
 
 ### [lazy.nvim](https://github.com/folke/lazy.nvim)
