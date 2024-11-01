@@ -79,7 +79,7 @@ M.setup = function(cfg)
       spotlight_lines(0, tbl.line1, tbl.line2, cfg)
     end,
     {
-      desc = "Spotlight a range of lines (via spotlight.nvim)",
+      desc = "Put a range of lines in the spotlight (via spotlight.nvim)",
       range = true,
       nargs = "*",
       complete = command.complete,
