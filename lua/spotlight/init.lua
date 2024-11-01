@@ -2,10 +2,22 @@ local command = require("spotlight.command")
 local config = require("spotlight.config")
 local M = {}
 local ns = vim.api.nvim_create_namespace("spotlight.nvim")
----@type table<integer, integer> Maps a bufnr to its counter.
-local buffers_counts = vim.defaulttable(function()
-  return 0
-end)
+
+---@type table<integer, integer> Maps a bufnr to its counter. Automatically converts 0 to the current bufnr.
+local buffers_counts = setmetatable({}, {
+  __index = function(t, bufnr)
+    if bufnr == 0 then
+      return t[vim.api.nvim_get_current_buf()]
+    end
+    return 0
+  end,
+  __newindex = function(t, bufnr, v)
+    if bufnr == 0 then
+      bufnr = vim.api.nvim_get_current_buf()
+    end
+    rawset(t, bufnr, v)
+  end,
+})
 
 ---@param bufnr integer
 ---@param line_start integer 1-indexed
@@ -64,7 +76,7 @@ M.setup = function(cfg)
     ---@param tbl { line1: number, line2: number, fargs: string[] }
     function(tbl)
       local cfg = command.fargs_to_config(tbl.fargs) ---@diagnostic disable-line: redefined-local
-      spotlight_lines(vim.api.nvim_get_current_buf(), tbl.line1, tbl.line2, cfg)
+      spotlight_lines(0, tbl.line1, tbl.line2, cfg)
     end,
     {
       desc = "Spotlight a range of lines (via spotlight.nvim)",
@@ -86,11 +98,11 @@ M.setup = function(cfg)
       end
 
       if tbl.args == "buffer" then
-        spotlight_clear_buffer(vim.api.nvim_get_current_buf())
+        spotlight_clear_buffer(0)
         return
       end
 
-      spotlight_clear(vim.api.nvim_get_current_buf(), tbl.line1, tbl.line2)
+      spotlight_clear(0, tbl.line1, tbl.line2)
     end,
     {
       desc = "Remove a range of lines, a buffer, or everything from the spotlight (via spotlight.nvim)",
