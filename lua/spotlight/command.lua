@@ -13,6 +13,31 @@ local parse_value = function(x)
   return x
 end
 
+local completions = setmetatable({
+  ---@return string[]
+  count = function()
+    return { "false", "true" }
+  end,
+  ---@return string[]
+  hl_group = function()
+    return vim.tbl_keys(vim.api.nvim_get_hl(0, {}))
+  end,
+}, {
+  -- Default to table's keys
+  __index = function(t, _)
+    return function()
+      return vim.tbl_keys(t)
+    end
+  end,
+})
+
+---@param word string "the leading portion of the argument currently being completed on"
+---@return string[]
+M.complete = function(word)
+  word = string.sub(word, 1, -2) -- trim a potential trailing "="
+  return completions[word]()
+end
+
 ---Override `config.current()` with values parsed from `fargs`.
 ---
 --- - Assumes that `fargs` has a `key=value` format.
