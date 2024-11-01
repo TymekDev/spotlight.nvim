@@ -63,9 +63,8 @@ M.setup = function(cfg)
     "Spotlight",
     ---@param tbl { line1: number, line2: number, fargs: string[] }
     function(tbl)
-      local bufnr = vim.api.nvim_get_current_buf()
       local cfg = command.fargs_to_config(tbl.fargs) ---@diagnostic disable-line: redefined-local
-      spotlight_lines(bufnr, tbl.line1, tbl.line2, cfg)
+      spotlight_lines(vim.api.nvim_get_current_buf(), tbl.line1, tbl.line2, cfg)
     end,
     {
       desc = "Spotlight a range of lines (via spotlight.nvim)",
